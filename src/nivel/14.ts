@@ -2,7 +2,7 @@
 import foto from "../assets/mrBurns.webp"
 import { GridColor } from "../util/hexadimal";
 
-export const nome = "Mr. Burns' coat"
+export const nome = "Mr. Burns' suit"
 
 export const imagem = foto
 

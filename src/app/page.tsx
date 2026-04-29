@@ -465,9 +465,10 @@ export default function TelaJogoCores() {
                                 dicas: novasDicas,
                                 acertou: true,
                               });
-
+                              registrarDerrota()
                               return;
                             }
+                            
 
                             salvarPartida({
                               nivel,
