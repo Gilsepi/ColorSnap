@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gerarGridComCorInicial, GridColor, gridToString } from "../util/hexadimal";
+import { gerarGridAleatorio, gerarGridComCorInicial, GridColor, gridToString } from "../util/hexadimal";
 import Image from "next/image";
 import Cookies from "js-cookie";
 
@@ -17,6 +17,18 @@ type Estatisticas = {
   tentativa3: number;
   derrotas: number;
 };
+
+type EstadoPartida = {
+  nivel: string;
+  grid: GridColor[][];
+  tentativas: number;
+  finalizou: boolean;
+  resultado: "correct" | "wrong" | null;
+  dicas: Dica[];
+  acertou: boolean;
+};
+
+const niveisTotais = 15;
 
 const ESTATISTICAS_INICIAIS: Estatisticas = {
   tentativa1: 0,
@@ -37,6 +49,7 @@ export default function TelaJogoCores() {
   const [nome, setNome] = useState<any>(null);
   const [foto, setFoto] = useState<any>(null);
   const [nivel, setNivel] = useState<string>("");
+  const [mode, setMode] = useState<string>("");
 
   const [modalAberto, setModalAberto] = useState(false);
 
@@ -46,7 +59,7 @@ export default function TelaJogoCores() {
   );
 
   useEffect(() => {
-    const novoGrid = gerarGridComCorInicial("#A0CBE6");
+    const novoGrid = gerarGridAleatorio("#C4D92A");
     setNovoGrid(novoGrid);
   }, []);
 
@@ -57,6 +70,17 @@ export default function TelaJogoCores() {
       setEstatisticas(JSON.parse(statsSalvas));
     }
   }, []);
+
+
+  function definirDificuldade(modo: string) {
+    if (modo === "Normal") {
+      return " text-amber-300 bg-amber-400/20"
+    } else if (modo === "Easy") {
+      return " text-emerald-300 bg-emerald-400/20"
+    } else {
+      return " text-red-300 bg-red-400/20"
+    }
+  }
 
   const salvarEstatisticas = (novasStats: Estatisticas) => {
     setEstatisticas(novasStats);
@@ -87,7 +111,7 @@ export default function TelaJogoCores() {
     salvarEstatisticas(novasStats);
   };
 
-  
+
 
   useEffect(() => {
     const nivelSalvo = Cookies.get("nivel");
@@ -101,18 +125,42 @@ export default function TelaJogoCores() {
   }, []);
 
   useEffect(() => {
-    if (nivel && Number(nivel) < 100) {
+    if (nivel && Number(nivel) <= niveisTotais) {
       async function carregarDados() {
+        const partidaSalva = carregarPartidaSalva();
+
         const modulo = await import(`../nivel/${nivel}.ts`);
 
         setNome(modulo.nome);
-        setGrid(modulo.grid);
         setFoto(modulo.imagem);
+        setMode(modulo.mode)
+
+        if (partidaSalva && partidaSalva.nivel === nivel) {
+          setGrid(partidaSalva.grid);
+          setTentativas(partidaSalva.tentativas);
+          setFinalizou(partidaSalva.finalizou);
+          setResultado(partidaSalva.resultado);
+          setDicas(partidaSalva.dicas);
+          setAcertou(partidaSalva.acertou);
+          return;
+        }
+
+        setGrid(modulo.grid);
         setAcertou(false);
         setTentativas(3);
         setFinalizou(false);
         setResultado(null);
         setDicas([]);
+
+        salvarPartida({
+          nivel,
+          grid: modulo.grid,
+          tentativas: 3,
+          finalizou: false,
+          resultado: null,
+          dicas: [],
+          acertou: false,
+        });
       }
 
       carregarDados();
@@ -126,7 +174,9 @@ export default function TelaJogoCores() {
   const irParaProximoNivel = () => {
     const proximoNivel = Number(nivel) + 1;
 
-    if (proximoNivel > 100) return;
+    if (proximoNivel > niveisTotais) return;
+
+    limparPartidaSalva();
 
     Cookies.set("nivel", String(proximoNivel), {
       expires: 365,
@@ -161,6 +211,29 @@ export default function TelaJogoCores() {
     }
 
     return "bg-white/90 text-slate-900";
+  };
+
+
+  const salvarPartida = (estado: EstadoPartida) => {
+    Cookies.set("partidaAtual", JSON.stringify(estado), {
+      expires: 365,
+    });
+  };
+
+  const carregarPartidaSalva = () => {
+    const partida = Cookies.get("partidaAtual");
+
+    if (!partida) return null;
+
+    try {
+      return JSON.parse(partida) as EstadoPartida;
+    } catch {
+      return null;
+    }
+  };
+
+  const limparPartidaSalva = () => {
+    Cookies.remove("partidaAtual");
   };
 
   return (
@@ -198,6 +271,9 @@ export default function TelaJogoCores() {
               <span className="rounded-full bg-emerald-400/20 px-4 py-1 text-sm font-semibold text-emerald-300">
                 Level {nivel || "1"}
               </span>
+              <span className={`rounded-full bg-amber-400/20 ml-2 px-4 py-1 text-sm font-semibold ${definirDificuldade(mode)}`}>
+                Difficulty {mode}
+              </span>
 
               <h2 className="mt-3 text-2xl font-bold">
                 What color is{" "}
@@ -231,6 +307,7 @@ export default function TelaJogoCores() {
                 <Image
                   alt={nome || "foto"}
                   src={foto}
+                  priority
                   className={`
                     max-h-full max-w-full object-contain pointer-events-none
                     transition-all duration-[3s] ease-in-out
@@ -312,19 +389,31 @@ export default function TelaJogoCores() {
                             );
 
                             if (celula.isTarget) {
-                              setAcertou(true);
-                              setResultado("correct");
-                              setFinalizou(true);
-                              registrarVitoria();
-
-                              setDicas((prev) => [
-                                ...prev,
+                              const novasDicas = [
+                                ...dicas,
                                 {
                                   linha: i,
                                   coluna: j,
                                   cor: "green",
                                 },
-                              ]);
+                              ] as Dica[];
+
+                              setAcertou(true);
+                              setResultado("correct");
+                              setFinalizou(true);
+                              setDicas(novasDicas);
+
+                              registrarVitoria();
+
+                              salvarPartida({
+                                nivel,
+                                grid,
+                                tentativas,
+                                finalizou: true,
+                                resultado: "correct",
+                                dicas: novasDicas,
+                                acertou: true,
+                              });
 
                               return;
                             }
@@ -334,41 +423,61 @@ export default function TelaJogoCores() {
 
                             const novasTentativas = tentativas - 1;
 
-                            setTentativas(novasTentativas);
 
-                            setDicas((prev) => [
-                              ...prev,
+                            const novoGridAtualizado = grid.map((linhaAtual, rowIndex) =>
+                              linhaAtual.map((celulaAtual, colIndex) => {
+                                if (rowIndex === i && colIndex === j) {
+                                  return {
+                                    ...celulaAtual,
+                                    color: "#64748b",
+                                    isClicked: true,
+                                  };
+                                }
+
+                                return celulaAtual;
+                              })
+                            );
+
+                            const novasDicas = [
+                              ...dicas,
                               {
                                 linha: i,
                                 coluna: j,
                                 cor: mesmaLinhaOuColuna ? "yellow" : "red",
                               },
-                            ]);
+                            ] as Dica[];
 
-                            setGrid((prevGrid) =>
-                              prevGrid.map((linhaAtual, rowIndex) =>
-                                linhaAtual.map((celulaAtual, colIndex) => {
-                                  if (rowIndex === i && colIndex === j) {
-                                    return {
-                                      ...celulaAtual,
-                                      color: "#64748b",
-                                      isClicked: true,
-                                    };
-                                  }
-
-                                  return celulaAtual;
-                                })
-                              )
-                            );
+                            setGrid(novoGridAtualizado);
+                            setDicas(novasDicas);
+                            setTentativas(novasTentativas);
 
                             if (novasTentativas === 0) {
                               setResultado("wrong");
                               setFinalizou(true);
                               setAcertou(true);
-                              registrarDerrota();
 
+                              salvarPartida({
+                                nivel,
+                                grid: novoGridAtualizado,
+                                tentativas: novasTentativas,
+                                finalizou: true,
+                                resultado: "wrong",
+                                dicas: novasDicas,
+                                acertou: true,
+                              });
 
+                              return;
                             }
+
+                            salvarPartida({
+                              nivel,
+                              grid: novoGridAtualizado,
+                              tentativas: novasTentativas,
+                              finalizou: false,
+                              resultado: null,
+                              dicas: novasDicas,
+                              acertou: false,
+                            });
                           }}
                         />
                       ))}
@@ -382,7 +491,7 @@ export default function TelaJogoCores() {
                   onClick={irParaProximoNivel}
                   className="mt-6 w-full rounded-2xl bg-emerald-500 px-6 py-4 text-lg font-black text-white shadow-lg shadow-emerald-500/30 transition hover:scale-105 hover:bg-emerald-400 active:scale-95"
                 >
-                  Next level
+                  {nivel === String(niveisTotais) ? "Thanks for playing" : "Next level"}
                 </button>
               )}
             </div>

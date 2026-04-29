@@ -6,6 +6,7 @@ export const nome = "Mc Donald's"
 
 export const imagem = foto
 
+export const mode = "Easy"
 
 export const grid: GridColor[][]= [
   [{

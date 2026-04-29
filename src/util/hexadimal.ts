@@ -88,6 +88,43 @@ export function gerarGridComCorInicial(
   );
 }
 
+function gerarCorAleatoria() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+
+  return rgbToHex(r, g, b);
+}
+
+export function gerarGridAleatorio(
+  corAlvo: string,
+  linhas = 6,
+  colunas = 6
+): GridColor[][] {
+  const targetLinha = Math.floor(Math.random() * linhas);
+  const targetColuna = Math.floor(Math.random() * colunas);
+
+  function gerarCorAleatoria() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+
+    return rgbToHex(r, g, b);
+  }
+
+  return Array.from({ length: linhas }, (_, linha) =>
+    Array.from({ length: colunas }, (_, coluna) => {
+      const isTarget = linha === targetLinha && coluna === targetColuna;
+
+      return {
+        color: isTarget ? corAlvo : gerarCorAleatoria(),
+        isTarget,
+        isClicked: false,
+      };
+    })
+  );
+}
+
 export function gridToString(grid: GridColor[][]): string {
   const linhas = grid.map((linha) => {
     const itens = linha.map((celula) => {

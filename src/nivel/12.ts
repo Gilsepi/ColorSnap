@@ -1,162 +1,161 @@
 
-import foto from "../assets/barney.webp"
+import foto from "../assets/barbie.png"
 import { GridColor } from "../util/hexadimal";
 
-export const nome = "Barney"
+export const nome = "Barbie"
 
 export const imagem = foto
 
 export const mode = "Easy"
 
-
 export const grid: GridColor[][] = [
   [{
-        color: "#edcdef",
+        color: "#fad5e9",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#eac6ed",
+        color: "#f9cfe5",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#e7bfeb",
+        color: "#f8c8e2",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#e5b8e9",
+        color: "#f8c2df",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#e2b0e6",
+        color: "#f7bcdc",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#dfa9e4",
+        color: "#f6b6d8",
         isTarget: false,
         isClicked: false
       }],
   [{
-        color: "#e1aee5",
+        color: "#f6b3d7",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#dea6e3",
+        color: "#f5add3",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#dc9fe1",
+        color: "#f4a7d0",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#d998df",
+        color: "#f4a1cd",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#d691dc",
+        color: "#f39bca",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#d489da",
+        color: "#f294c6",
         isTarget: false,
         isClicked: false
       }],
   [{
-        color: "#d68edc",
+        color: "#f292c5",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#d387d9",
+        color: "#f18bc2",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#d080d7",
+        color: "#f085be",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#ce78d5",
+        color: "#f07fbb",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#cb71d2",
+        color: "#ef79b8",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#c86ad0",
+        color: "#ee73b5",
         isTarget: false,
         isClicked: false
       }],
   [{
-        color: "#ca6ed2",
+        color: "#ee70b3",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#c767cf",
+        color: "#ed6ab0",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#c560cd",
+        color: "#ec64ac",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#c259cb",
+        color: "#ec5ea9",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#bf51c8",
+        color: "#eb57a6",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#bd4ac6",
+        color: "#ea51a3",
         isTarget: false,
         isClicked: false
       }],
   [{
-        color: "#be4fc8",
+        color: "#ea4ea1",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#bc47c5",
+        color: "#e9489e",
         isTarget: false,
         isClicked: false
       }, {
-        color: "#b940c3",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#b639c1",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#b432bf",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#b12bbc",
-        isTarget: false,
-        isClicked: false
-      }],
-  [{
-        color: "#b32fbe",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#b028bb",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#ad21b9",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#a91db5",
-        isTarget: false,
-        isClicked: false
-      }, {
-        color: "#ac1db8",
+        color: "#E83F99",
         isTarget: true,
         isClicked: false
       }, {
-        color: "#9e1ba9",
+        color: "#e43e97",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#dd3c92",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#d53a8d",
+        isTarget: false,
+        isClicked: false
+      }],
+  [{
+        color: "#d2398a",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#cb3786",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#c33581",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#bc337c",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#b43177",
+        isTarget: false,
+        isClicked: false
+      }, {
+        color: "#ad2f72",
         isTarget: false,
         isClicked: false
       }]

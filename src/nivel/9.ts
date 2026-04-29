@@ -6,6 +6,8 @@ export const nome = "Donkey Kong"
 
 export const imagem = foto
 
+export const mode = "Easy"
+
 export const grid: GridColor[][] = [
   [{
         color: "#a89490",
